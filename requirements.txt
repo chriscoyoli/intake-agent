@@ -1,0 +1,12 @@
+# Core
+anthropic>=0.39.0
+python-dotenv>=1.0.0
+
+# Slack front end (Socket Mode)
+slack-bolt>=1.18.0
+
+# Destinations (install what you use; all are optional except gspread for the demo)
+gspread>=6.0.0            # Google Sheets (default destination)
+google-auth>=2.0.0        # service-account auth for gspread
+pyairtable>=2.3.0         # Airtable adapter
+requests>=2.31.0          # Asana + Jira adapters (REST)

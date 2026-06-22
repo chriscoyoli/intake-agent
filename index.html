@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Universal Intake Agent — Live Demo Reference</title>
+<style>
+  :root{ --red:#ED1B2F; --ink:#111; --muted:#444; --line:#e2e2e2; --soft:#faf6f6; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#f4f4f4;
+    color:var(--ink);
+    font-family:Georgia,"Times New Roman",Times,serif;
+    font-size:16px; line-height:1.6;
+  }
+  .wrap{
+    max-width:880px; margin:36px auto; background:#fff; padding:56px 62px;
+    box-shadow:0 0 20px rgba(0,0,0,.12), 0 5px 5px rgba(0,0,0,.10);
+  }
+  .eyebrow{font-family:Arial,Helvetica,sans-serif; text-transform:uppercase;
+    letter-spacing:1.6px; font-size:11.5px; font-weight:700; color:var(--red); margin:0;}
+  h1{font-size:34px; line-height:1.15; margin:8px 0 12px;}
+  .lede{font-size:18px; color:#222; margin:0 0 18px;}
+  .rule{border:0; border-top:3px solid var(--red); width:66px; margin:20px 0 6px;}
+  .tags{margin:14px 0 4px;}
+  .tag{display:inline-block; font-family:Arial,Helvetica,sans-serif; font-size:11px;
+    text-transform:uppercase; letter-spacing:.6px; color:var(--red); border:1px solid var(--red);
+    padding:3px 9px; margin:0 6px 6px 0;}
+  .meta{font-family:Arial,Helvetica,sans-serif; font-size:12.5px; color:var(--muted); margin-top:10px;}
+  h2{font-size:23px; margin:42px 0 12px; padding-top:22px; border-top:1px solid var(--line);}
+  h3{font-family:Arial,Helvetica,sans-serif; text-transform:uppercase; letter-spacing:.5px;
+    font-size:13px; font-weight:700; color:var(--red); margin:24px 0 6px;}
+  p{margin:0 0 12px;}
+  a{color:var(--red); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  strong{color:var(--ink);}
+  ul,ol{margin:0 0 12px; padding-left:22px;}
+  li{margin-bottom:6px;}
+  .toc{background:var(--soft); border-left:3px solid var(--red); padding:16px 22px; margin:10px 0 8px;}
+  .toc ul{list-style:none; padding:0; margin:0; columns:2; font-family:Arial,Helvetica,sans-serif; font-size:13.5px;}
+  .toc li{margin-bottom:5px;}
+  table{border-collapse:collapse; width:100%; margin:8px 0 16px; font-size:14.5px;}
+  th{font-family:Arial,Helvetica,sans-serif; text-transform:uppercase; letter-spacing:.4px;
+    font-size:11.5px; text-align:left; color:#fff; background:var(--red); padding:8px 10px;}
+  td{padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tr:nth-child(even) td{background:#fafafa;}
+  pre{background:#f6f6f6; border-left:3px solid #ccc; padding:14px 16px; overflow:auto;
+    font-family:"SF Mono",Menlo,Consolas,monospace; font-size:13px; line-height:1.45; color:#222;}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace; font-size:90%; background:#f0f0f0; padding:1px 4px;}
+  pre code{background:none; padding:0; font-size:inherit;}
+  .qa{margin:0 0 14px;}
+  .qa .q{font-weight:bold; display:block; margin-bottom:2px;}
+  .diagram{border:1px solid var(--line); padding:10px; margin:14px 0 20px;}
+  .diagram svg{width:100%; height:auto; display:block;}
+  .callout{background:var(--soft); border-left:3px solid var(--red); padding:10px 16px; margin:6px 0 14px; font-style:italic; color:#333;}
+  .turn{font-family:Arial,Helvetica,sans-serif; font-size:14px; margin:4px 0;}
+  .turn b{color:var(--red);}
+  .scenario{border-top:1px solid var(--line); padding-top:14px; margin-top:18px;}
+  footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--line);
+    font-family:Arial,Helvetica,sans-serif; font-size:12px; color:var(--muted);}
+  @media (max-width:680px){ .wrap{padding:34px 22px;margin:0;} .toc ul{columns:1;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Live demo reference</p>
+  <h1>Universal Intake Agent</h1>
+  <p class="lede">One front door in Slack for every employee request. The agent interprets a plain-language ask, routes it into the tool that team already uses, and keeps one Google Sheet as the unified record of everything.</p>
+  <hr class="rule">
+  <div class="tags">
+    <span class="tag">Legal &rarr; Airtable</span>
+    <span class="tag">IT &rarr; Jira</span>
+    <span class="tag">Marketing &rarr; Asana</span>
+    <span class="tag">Product &rarr; Google Sheets</span>
+  </div>
+  <p class="meta">Working proof of concept &middot; live Slack bot, powered by Claude &middot; hosted on Fly.io &middot; synthetic data only</p>
+
+  <div class="toc">
+    <ul>
+      <li><a href="#why">Why this matters</a></li>
+      <li><a href="#how">How it works (under the hood)</a></li>
+      <li><a href="#stages">The three stages</a></li>
+      <li><a href="#cost">What it costs</a></li>
+      <li><a href="#security">Security &amp; data</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#script">Live demo script</a></li>
+      <li><a href="#limits">Limitations &amp; path to production</a></li>
+    </ul>
+  </div>
+
+  <h2 id="why">Why this matters</h2>
+  <p>Intake is a universal tax. Every team has a different door (Legal by email, IT by ticket, Marketing by form, Product by spreadsheet), every door leaks incomplete information, and employees lose time both submitting work and chasing its status. This removes that tax with one front door, while letting every team keep working exactly as they do today. The win is not a new tool to roll out; it is less friction across the whole company with no migration.</p>
+  <p>The reusable pattern is bigger than intake: <strong>a natural-language front end, a reasoning layer that interprets and structures the request, an action into the systems you already have, and a status loop back to the person.</strong> That same shape fits fraud and analyst operations (triage and route inbound cases, assemble case context, draft notes), any internal inbound queue (data-access requests, vendor and security reviews, escalations), and knowledge or reporting tasks. This demo is one instance of a pattern that can be pointed at many internal workflows with the same architecture and guardrails.</p>
+  <h3>Empowering employees to build their own POCs</h3>
+  <p>The most important takeaway is the speed: a working, multi-tool, AI-powered internal tool was built in an afternoon by one person, using AI-assisted coding and the teams' existing tools. The unlock is that domain experts can now prototype solutions to their own pain points without a full engineering project. To make that a capability rather than a one-off: provide a small library of vetted connectors and templates (the adapter pattern here is exactly that), a sanctioned sandbox with synthetic data only, light security guardrails with a review path instead of gates, and a known set of steps to graduate a promising prototype to production.</p>
+
+  <h2 id="how">How it works (under the hood)</h2>
+  <h3>Is this an AI agent, or just a Slack app?</h3>
+  <p>It is an AI agent. Slack is only the surface the employee sees. Behind it, the agent runs a reasoning loop: it interprets a plain-language request, decides which team owns it, figures out which details are still missing, asks for only those, then calls a tool to file the ticket. It is not a fixed decision tree or a branching form. The same agent handles "my laptop battery is dead" and "I need an NDA reviewed for a vendor" without either path being hard-coded, because it reasons about each request. It uses the model's tool-use capability with two tools, <code>create_ticket</code> and <code>get_ticket_status</code>, and decides for itself when to ask, when to file, and what to put in each field. That is what makes it an agent rather than a chatbot or a workflow.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 880 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram" font-family="Arial,Helvetica,sans-serif">
+      <defs>
+        <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#444"/></marker>
+        <marker id="ahp" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#ED1B2F"/></marker>
+      </defs>
+      <text x="24" y="30" font-size="20" font-weight="700" fill="#111">One front door, four tools, one record</text>
+      <text x="24" y="52" font-size="12" fill="#444">The agent turns a plain-language Slack message into one structured ticket, routes it to the team's tool, and mirrors everything into a single Google Sheet.</text>
+      <rect x="24" y="84" width="150" height="92" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="99" y="122" font-size="14" font-weight="700" fill="#111" text-anchor="middle">Employee</text>
+      <text x="99" y="144" font-size="12" font-weight="700" fill="#ED1B2F" text-anchor="middle" font-family="monospace">/problem</text>
+      <text x="99" y="162" font-size="11.5" fill="#444" text-anchor="middle">in Slack</text>
+      <rect x="300" y="84" width="280" height="92" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="440" y="118" font-size="14" font-weight="700" fill="#111" text-anchor="middle">Intake agent</text>
+      <text x="440" y="139" font-size="11.5" fill="#444" text-anchor="middle">interprets, asks qualifying questions,</text>
+      <text x="440" y="155" font-size="11.5" fill="#444" text-anchor="middle">builds one structured ticket, routes it</text>
+      <line x1="174" y1="130" x2="296" y2="130" stroke="#444" stroke-width="1.5" marker-end="url(#ah)"/>
+      <path d="M440,176 L119,204" stroke="#444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L333,204" stroke="#444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L547,204" stroke="#444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L761,204" stroke="#444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <rect x="24"  y="208" width="190" height="80" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="119" y="242" font-size="14" font-weight="700" fill="#111" text-anchor="middle">Legal</text>
+      <text x="119" y="262" font-size="11.5" fill="#444" text-anchor="middle">Airtable</text>
+      <rect x="238" y="208" width="190" height="80" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="333" y="242" font-size="14" font-weight="700" fill="#111" text-anchor="middle">IT</text>
+      <text x="333" y="262" font-size="11.5" fill="#444" text-anchor="middle">Jira</text>
+      <rect x="452" y="208" width="190" height="80" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="547" y="242" font-size="14" font-weight="700" fill="#111" text-anchor="middle">Marketing</text>
+      <text x="547" y="262" font-size="11.5" fill="#444" text-anchor="middle">Asana</text>
+      <rect x="666" y="208" width="190" height="80" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="761" y="242" font-size="14" font-weight="700" fill="#111" text-anchor="middle">Product</text>
+      <text x="761" y="262" font-size="11.5" fill="#444" text-anchor="middle">Google Sheets</text>
+      <path d="M119,288 V324" stroke="#ED1B2F" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M333,288 V324" stroke="#ED1B2F" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M547,288 V324" stroke="#ED1B2F" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M761,288 V324" stroke="#ED1B2F" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <text x="440" y="312" font-size="12" font-weight="700" fill="#ED1B2F" text-anchor="middle">every ticket and status change is mirrored here</text>
+      <rect x="24" y="328" width="832" height="64" fill="#fff" stroke="#ED1B2F" stroke-width="2"/>
+      <text x="440" y="356" font-size="14" font-weight="700" fill="#ED1B2F" text-anchor="middle">Google Sheet &mdash; unified record of all intake</text>
+      <text x="440" y="376" font-size="11.5" fill="#444" text-anchor="middle">one row per request across every team, always reflecting the latest status</text>
+      <path d="M120,392 V452 H12 V130 H20" stroke="#ED1B2F" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#ahp)"/>
+      <text x="320" y="446" font-size="12" font-weight="700" fill="#ED1B2F" text-anchor="middle">status breadcrumbs flow back to the requester in Slack</text>
+      <text x="24" y="484" font-size="11" fill="#444">Adding a team is one routing rule plus one adapter. The Sheet stays the single source of truth.</text>
+    </svg>
+  </div>
+
+  <p>Every tool sits behind one tiny interface (<code>create</code> / <code>get</code>). A mirror layer wraps each team's tool so every ticket is also written to the shared Sheet, and a background watcher keeps the Sheet's status in sync as work moves. Adding a team is one line in the routing map plus one adapter. That is the whole architectural argument: it generalizes to any team with an inbound queue, while the Sheet stays the single source of truth.</p>
+
+  <h3>The components</h3>
+  <table>
+    <tr><th>Layer</th><th>What it does</th><th>Technology</th></tr>
+    <tr><td>Surface</td><td>Where employees make requests</td><td>Slack (Socket Mode bot)</td></tr>
+    <tr><td>Reasoning</td><td>Interprets, qualifies, routes, writes the payload</td><td>Claude (Sonnet 4.6)</td></tr>
+    <tr><td>Router</td><td>Maps each team to its destination, mints a unique ticket ID</td><td>Python</td></tr>
+    <tr><td>Adapters</td><td>One small interface per tool</td><td>Airtable, Jira, Asana, Google Sheets</td></tr>
+    <tr><td>Unified record</td><td>Mirrors every ticket and status change into one place</td><td>Google Sheet</td></tr>
+    <tr><td>Status watcher</td><td>Detects changes in each tool and notifies the requester</td><td>Background poller</td></tr>
+    <tr><td>Host</td><td>Runs always-on, independent of any laptop</td><td>Fly.io</td></tr>
+  </table>
+
+  <h3>Reliability</h3>
+  <p>If the model is unavailable (a bad network moment), the agent falls back to a deterministic scripted flow so the conversation still completes. If a tool's credentials fail, that team falls back so the bot still responds. The bot runs as a single always-on process; Socket Mode needs no public URL, inbound ports, or webhooks.</p>
+
+  <h2 id="stages">The three stages</h2>
+  <ol>
+    <li><strong>Smart intake in Slack.</strong> The agent reads the request, infers the team, pre-fills every field it can, and asks at most one or two short questions at a time. Net better than a static form.</li>
+    <li><strong>Routing and a complete payload.</strong> One structured request is routed to the owning team's tool. The problem moves, not the person.</li>
+    <li><strong>Status visibility.</strong> A background watcher detects status changes in the team's tool, DMs the requester a plain-language breadcrumb, and mirrors the change into the unified Google Sheet.</li>
+  </ol>
+
+  <h2 id="cost">What it costs</h2>
+  <p>Cheap and predictable. The model is Claude Sonnet 4.6 at $3 per million input tokens and $15 per million output tokens. A complete intake conversation is small, which works out to roughly <strong>3 to 8 cents per completed request</strong>, call it a nickel.</p>
+  <ul>
+    <li>~1,000 requests/month: roughly <strong>$30 to $80</strong> in model cost.</li>
+    <li>~5,000 requests/month: roughly <strong>$150 to $400</strong>.</li>
+    <li>Hosting on Fly.io: about <strong>$5/month</strong> for one small always-on machine.</li>
+  </ul>
+  <p>Cost levers if volume grows: prompt caching drops repeated input to 10% of price, routine steps can run on the cheaper Haiku model, and non-interactive workloads can use the Batch API at 50% off. For an internal intake tool, model cost is a rounding error next to the staff time saved on clarifying-question back and forth. (Pricing as of mid-2026; verify current rates before quoting.)</p>
+
+  <h2 id="security">Security &amp; data</h2>
+  <p>For the demo, secure, and the design is built to be tightened for production. What touches the data: Slack (the message), the model provider (the request text, to reason about it), the destination tools, and the host. Each is a named, contractible vendor, not an open pipe. API tokens live in the host's encrypted secret store and are never committed to source control. The agent's blast radius is small: it can only file a ticket or look one up, so a manipulated prompt cannot delete data or change permissions.</p>
+  <p>The model provider (Anthropic) does <strong>not</strong> train on commercial API inputs or outputs by default, retains API logs for only 7 days, and offers zero-data-retention agreements for qualifying enterprises. This POC uses only synthetic data; for production you would filter sensitive fields at intake and likely run inside SentiLink's own cloud and compliance boundary so no new processor touches the data. Every ticket has a unique ID, requester, timestamp, and source for auditability, with immutable logging added in production.</p>
+
+  <h2 id="faq">FAQ</h2>
+
+  <h3>Business and strategy</h3>
+  <div class="qa"><span class="q">Why won't people just keep emailing the team directly?</span>Because the bot is less work than the status quo, not more: no form to hunt for, no fields to guess, and you get status back. Adoption follows the path of least resistance, and <code>/problem</code> can become the only supported door over time.</div>
+  <div class="qa"><span class="q">Why build this instead of buying ServiceNow or Moveworks?</span>Those make you standardize on their system and their forms. This does the opposite: every team keeps the tool it already uses, and the employee learns nothing new. For a company already on Jira, Airtable, and Asana, that is faster and cheaper than a migration, and you keep full control of the data, which matters more for a fraud company.</div>
+  <div class="qa"><span class="q">How do we measure success?</span>Fewer clarifying-question round trips, faster time-to-first-response per team, and a higher first-try correct-routing rate.</div>
+  <div class="qa"><span class="q">What would you build next?</span>Per-team access control, a real datastore, intake analytics and SLAs, and one or two more team integrations.</div>
+
+  <h3>Adoption and risk</h3>
+  <div class="qa"><span class="q">Could SentiLink adopt this today?</span>As an internal pilot on non-sensitive queues, effectively yes, it runs today. To make it the real front door for regulated data: move it inside SentiLink's own cloud account, replace the Sheet with a permissioned datastore and add per-team access control, add input handling for sensitive fields and immutable audit logging, and decide the model deployment (API with a BAA/zero-retention, or a private deployment). None of that is research; it is known engineering work on a proven design.</div>
+  <table>
+    <tr><th>Risk / dependency</th><th>Mitigation</th></tr>
+    <tr><td>Model provider dependency</td><td>Scripted fallback keeps it working; provider is swappable behind the agent.</td></tr>
+    <tr><td>Tool API availability</td><td>Each team falls back independently; the Sheet retains the record.</td></tr>
+    <tr><td>Single host / process</td><td>Easy to make redundant for non-Socket-Mode designs; for a pilot, one machine is fine.</td></tr>
+    <tr><td>In-memory conversation state</td><td>Resets on restart (filed tickets persist); production moves state to a datastore.</td></tr>
+    <tr><td>Prompt injection / misuse</td><td>Agent limited to create/lookup; routing validated server-side.</td></tr>
+    <tr><td>Sensitive data in a shared record</td><td>Add access control before any real data flows.</td></tr>
+  </table>
+
+  <h3>Technical</h3>
+  <div class="qa"><span class="q">What happens when a tool or the model is down?</span>Graceful degradation: failed tools fall back, and the model has a scripted fallback so the conversation survives a blip.</div>
+  <div class="qa"><span class="q">What if a request spans two teams, or it picks the wrong one?</span>It asks a clarifying question when ambiguous rather than guessing, and a mis-route is a one-field change, not a dead end.</div>
+  <div class="qa"><span class="q">Why a Google Sheet as the source of truth?</span>It is the POC's universal, screen-friendly stand-in, and the first thing to replace for production. The architecture treats it as just another backend behind the same interface.</div>
+
+  <h2 id="script">Live demo script</h2>
+  <p>A tight 6 to 8 minute walkthrough. Three scenarios show three routes into three real tools, each mirrored to the Sheet, plus an off-script curveball. The bot runs on Fly.io, so nothing needs to run on your laptop.</p>
+  <p><strong>Have open:</strong> Slack (a DM with Intake), and four tabs: the Airtable base, the Jira IT Service Desk project, the Asana Marketing Intake project, and the Google Sheet. Optionally a terminal running <code>fly logs</code> to narrate routing decisions live.</p>
+  <p class="callout">Opening line: "Every team here has a different intake path. The idea is one front door: you describe what you need in plain language, and it routes the work into whatever system that team already uses, while keeping one master record of everything."</p>
+
+  <div class="scenario">
+    <h3>Scenario 1 &mdash; laptop request &rarr; IT / Jira</h3>
+    <p class="turn"><b>You:</b> <code>/problem</code>, then "My laptop won't hold a charge anymore, I think the battery is dead."</p>
+    <p class="turn"><b>Bot:</b> infers IT, asks replacement vs new and when you need it by.</p>
+    <p class="turn"><b>You:</b> "Replacement, and I have a customer demo Thursday so ideally before then."</p>
+    <p class="turn"><b>Bot:</b> confirms and files a ticket like <code>IT-20260622-0001</code>.</p>
+    <p class="callout">Show the Jira tab (a real issue in IT Service Desk), then the Google Sheet (same ticket). "It lands in the tool IT works in and in the master record at once. It never asked which team, it inferred IT, and it set priority from the deadline I mentioned."</p>
+  </div>
+
+  <div class="scenario">
+    <h3>Scenario 2 &mdash; NDA &rarr; Legal / Airtable</h3>
+    <p class="turn"><b>You:</b> "I need an NDA reviewed before I can share specs with a vendor."</p>
+    <p class="turn"><b>Bot:</b> asks counterparty, one-way or mutual, deadline.</p>
+    <p class="turn"><b>You:</b> "Acme Robotics, mutual, signed by Friday."</p>
+    <p class="turn"><b>Bot:</b> files <code>LGL-20260622-0001</code>.</p>
+    <p class="callout">Show Airtable, then the Sheet. "Same front door, same structured payload, routed to Legal's tool instead of IT's. The only thing that changed is one line of config."</p>
+  </div>
+
+  <div class="scenario">
+    <h3>Scenario 3 &mdash; campaign &rarr; Marketing / Asana</h3>
+    <p class="turn"><b>You:</b> "We're launching the spring product update and I need a campaign to support it."</p>
+    <p class="turn"><b>Bot:</b> asks goal and audience, channels, launch date.</p>
+    <p class="turn"><b>You:</b> "Drive signups from free users, email plus LinkedIn, launching April 2."</p>
+    <p class="turn"><b>Bot:</b> files <code>MKT-20260622-0001</code>.</p>
+    <p class="callout">Show Asana, then the Sheet. "Three teams, three tools, one experience for the employee and one master record. Adding HR or Finance tomorrow is a routing rule and an adapter."</p>
+  </div>
+
+  <div class="scenario">
+    <h3>The status loop</h3>
+    <p>Go into a tool, not the Sheet, and move the work (drag the Jira issue to In Progress and assign it, or change Status in Airtable). Within about 8 seconds the bot DMs the requester in Slack and the Google Sheet row updates to match.</p>
+    <p class="callout">"The team works in their own tool. The requester gets a plain-language update in Slack without asking, and the master record stays in sync automatically. Nobody is copy-pasting between systems." You can also type <code>/ticket-status IT-20260622-0001</code> to pull status on demand.</p>
+  </div>
+
+  <div class="scenario">
+    <h3>The curveball</h3>
+    <p>Invite them: "Type anything an employee might actually ask." Because the brain is live Claude, it interprets novel requests, picks a team or asks one clarifying question, and gathers the right details. If it is outside the four teams, it says so and suggests who might own it rather than forcing a bad route.</p>
+    <p class="callout">Closing line: "Each team keeps working in the tool they already use, the employee never learns any of them, and one Google Sheet holds every request across every team. The connective tissue and the intake intelligence are the hard part, and that is what you just saw, running live."</p>
+  </div>
+
+  <h2 id="limits">Limitations &amp; path to production</h2>
+  <ul>
+    <li>Synthetic data only; no real PII has touched this build.</li>
+    <li>The unified Sheet is currently open to anyone with access; needs per-team access control before real data.</li>
+    <li>Conversation state and the ticket counter live in memory and reset on restart; filed records persist in the tools and the Sheet.</li>
+    <li>One host machine (correct for a Socket Mode pilot, not yet redundant).</li>
+    <li>Sheet-to-tool sync is one-directional (tool to Sheet) by design.</li>
+  </ul>
+  <p>These are scope choices for a few-hour proof of concept, not design flaws. Each has a known, ordinary fix on the path to production.</p>
+
+  <footer>
+    Universal Intake Agent &middot; proof of concept &middot; Slack + Claude + Airtable / Jira / Asana / Google Sheets, hosted on Fly.io.
+    Pricing and data-handling figures are current as of mid-2026; verify against vendor terms before quoting as commitments.
+  </footer>
+
+</div>
+</body>
+</html>

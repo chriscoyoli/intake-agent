@@ -1,0 +1,7 @@
+# Never commit secrets or local artifacts.
+.env
+service_account.json
+__pycache__/
+*.pyc
+.fly/
+.DS_Store

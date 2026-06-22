@@ -1,0 +1,47 @@
+# Slack app manifest for the Universal Intake Agent.
+# Create the app from this in ~1 minute:
+#   api.slack.com/apps  ->  Create New App  ->  From an app manifest
+#   pick your workspace, paste this YAML, Create.
+# Then: enable Socket Mode, generate an App-Level Token (scope connections:write),
+# install to the workspace, and copy the Bot + App tokens into your .env.
+
+display_information:
+  name: Intake
+  description: One front door for every request across IT, Legal, Marketing, Product.
+  background_color: "#534AB7"
+
+features:
+  bot_user:
+    display_name: Intake
+    always_online: true
+  slash_commands:
+    - command: /problem
+      description: Tell Intake what you need; it routes it to the right team.
+      usage_hint: "[describe your request]"
+      should_escape: false
+    - command: /ticket-status
+      description: Check the status of a request.
+      usage_hint: "TICKET-ID"
+      should_escape: false
+
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read      # respond to @Intake in channels
+      - chat:write             # post replies and proactive status DMs
+      - commands               # /problem and /ticket-status
+      - im:history             # read DMs to the bot
+      - im:read
+      - im:write               # open DMs with requesters
+      - users:read             # resolve display names
+
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.im
+  interactivity:
+    is_enabled: true
+  socket_mode_enabled: true
+  org_deploy_enabled: false
+  token_rotation_enabled: false

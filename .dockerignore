@@ -1,0 +1,10 @@
+# Keep secrets and local cruft OUT of the deployed image.
+.env
+service_account.json
+*.json.bak
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.fly/
+*.md

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Universal Intake Agent — Architecture Overview</title>
+<style>
+  :root{
+    --ink:#000000; --muted:#444444; --line:#d8d8d8; --accent:#e71b3d; --accentbg:#fdecef;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink); font-size:11px; line-height:1.45; background:#fff;
+  }
+  .page{max-width:760px; margin:0 auto; padding:26px 30px;}
+  header{border-bottom:3px solid var(--accent); padding-bottom:12px; margin-bottom:16px;
+    display:flex; justify-content:space-between; align-items:flex-end;}
+  h1{font-size:22px; margin:0 0 2px; letter-spacing:-0.2px;}
+  .tagline{font-size:12px; color:var(--muted); margin:0;}
+  .pill{font-size:9.5px; font-weight:700; color:#fff; background:var(--accent);
+    padding:4px 9px; border-radius:999px; white-space:nowrap;}
+  h2{font-size:11px; text-transform:uppercase; letter-spacing:0.7px; color:var(--accent);
+    margin:0 0 5px;}
+  p{margin:0 0 8px;}
+  .cols2{display:flex; gap:22px; margin-bottom:14px;}
+  .cols2 > div{flex:1;}
+  .diagram{border:1px solid var(--line); border-radius:8px; padding:8px 8px 4px; margin:4px 0 16px;}
+  .diagram svg{width:100%; height:auto; display:block;}
+  .cols3{display:flex; gap:18px;}
+  .cols3 > div{flex:1;}
+  ul{margin:0; padding-left:15px;}
+  li{margin-bottom:4px;}
+  .foot{margin-top:16px; padding-top:10px; border-top:1px solid var(--line);
+    font-size:9.5px; color:var(--muted);}
+  b,strong{color:var(--ink);}
+  .accent{color:var(--accent); font-weight:700;}
+  @page{size:letter; margin:0.5in;}
+  @media print{.page{padding:0; max-width:none;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div>
+      <h1>Universal Intake Agent</h1>
+      <p class="tagline">One front door in Slack for every employee request</p>
+    </div>
+    <span class="pill">PROOF OF CONCEPT · RUNNING LIVE</span>
+  </header>
+
+  <div class="cols2">
+    <div>
+      <h2>The problem</h2>
+      <p>Every team has a different intake path: Legal by email, IT by ticket, Marketing by form, Product by spreadsheet. Employees must know which door to use and fill out a different thin form each time. Those forms arrive incomplete, triggering rounds of clarifying questions, and once submitted, the requester has no visibility into what happens next.</p>
+    </div>
+    <div>
+      <h2>The approach</h2>
+      <p>An employee types <span class="accent">/problem</span> in Slack and describes the need in plain language. An AI agent interprets it, asks only the few qualifying questions still missing, and assembles one complete, well-formed request. It routes that request into the tool the destination team already uses, so the employee never learns a new system, and sends them plain-language status updates as the work moves.</p>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 880 510" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram" font-family="-apple-system,Helvetica,Arial,sans-serif">
+      <defs>
+        <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#444444"/></marker>
+        <marker id="ahp" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#e71b3d"/></marker>
+      </defs>
+      <text x="24" y="30" font-size="20" font-weight="700" fill="#000000">One front door, four tools, one record</text>
+      <text x="24" y="52" font-size="12" fill="#444444">The agent turns a plain-language Slack message into one structured ticket, routes it to the team's tool, and mirrors everything into a single Google Sheet.</text>
+
+      <rect x="24" y="84" width="150" height="92" rx="10" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="99" y="122" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">Employee</text>
+      <text x="99" y="144" font-size="12" font-weight="700" fill="#e71b3d" text-anchor="middle" font-family="monospace">/problem</text>
+      <text x="99" y="162" font-size="11.5" fill="#444444" text-anchor="middle">in Slack</text>
+
+      <rect x="300" y="84" width="280" height="92" rx="10" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="440" y="118" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">Intake agent</text>
+      <text x="440" y="139" font-size="11.5" fill="#444444" text-anchor="middle">interprets, asks qualifying questions,</text>
+      <text x="440" y="155" font-size="11.5" fill="#444444" text-anchor="middle">builds one structured ticket, routes it</text>
+
+      <line x1="174" y1="130" x2="296" y2="130" stroke="#444444" stroke-width="1.5" marker-end="url(#ah)"/>
+
+      <path d="M440,176 L119,204" stroke="#444444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L333,204" stroke="#444444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L547,204" stroke="#444444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+      <path d="M440,176 L761,204" stroke="#444444" stroke-width="1.2" fill="none" marker-end="url(#ah)"/>
+
+      <rect x="24"  y="208" width="190" height="80" rx="9" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="119" y="242" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">Legal</text>
+      <text x="119" y="262" font-size="11.5" fill="#444444" text-anchor="middle">Airtable</text>
+      <rect x="238" y="208" width="190" height="80" rx="9" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="333" y="242" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">IT</text>
+      <text x="333" y="262" font-size="11.5" fill="#444444" text-anchor="middle">Jira</text>
+      <rect x="452" y="208" width="190" height="80" rx="9" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="547" y="242" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">Marketing</text>
+      <text x="547" y="262" font-size="11.5" fill="#444444" text-anchor="middle">Asana</text>
+      <rect x="666" y="208" width="190" height="80" rx="9" fill="#fff" stroke="#cfcfcf" stroke-width="1.5"/>
+      <text x="761" y="242" font-size="14" font-weight="700" fill="#000000" text-anchor="middle">Product</text>
+      <text x="761" y="262" font-size="11.5" fill="#444444" text-anchor="middle">Google Sheets</text>
+
+      <path d="M119,288 V324" stroke="#e71b3d" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M333,288 V324" stroke="#e71b3d" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M547,288 V324" stroke="#e71b3d" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <path d="M761,288 V324" stroke="#e71b3d" stroke-width="1.6" fill="none" marker-end="url(#ahp)"/>
+      <text x="440" y="312" font-size="12" font-weight="700" fill="#e71b3d" text-anchor="middle">every ticket and status change is mirrored here</text>
+
+      <rect x="24" y="328" width="832" height="64" rx="10" fill="#fff" stroke="#e71b3d" stroke-width="2"/>
+      <text x="440" y="356" font-size="14" font-weight="700" fill="#e71b3d" text-anchor="middle">Google Sheet — unified record of all intake</text>
+      <text x="440" y="376" font-size="11.5" fill="#444444" text-anchor="middle">one row per request across every team, always reflecting the latest status</text>
+
+      <path d="M120,392 V452 H12 V130 H20" stroke="#e71b3d" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#ahp)"/>
+      <text x="320" y="446" font-size="12" font-weight="700" fill="#e71b3d" text-anchor="middle">status breadcrumbs flow back to the requester in Slack</text>
+
+      <text x="24" y="484" font-size="11" fill="#444444">Adding a team is one routing rule plus one adapter. The Sheet stays the single source of truth.</text>
+    </svg>
+  </div>
+
+  <div class="cols3">
+    <div>
+      <h2>Running today</h2>
+      <ul>
+        <li>Live Slack bot, powered by Claude, hosted always-on.</li>
+        <li>Real routing into <b>Airtable, Jira, Asana</b>, plus a <b>Google Sheet</b> as the unified record.</li>
+        <li>Automatic status breadcrumbs back to the requester.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Why it generalizes</h2>
+      <ul>
+        <li>Every tool sits behind one small interface.</li>
+        <li>One structured request, rendered into each team's format.</li>
+        <li>Any team with an inbound queue plugs in the same way.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Path to production</h2>
+      <ul>
+        <li>This POC uses only synthetic test data.</li>
+        <li>For real data, the same design deploys inside the company's own cloud and compliance boundary.</li>
+        <li>Data flows one direction (tool to record); no new processor required.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="foot">Built as a working proof of concept. Slack is the only surface employees see; each team keeps using the tool it already has; one Google Sheet holds every request across every team.</p>
+
+</div>
+</body>
+</html>

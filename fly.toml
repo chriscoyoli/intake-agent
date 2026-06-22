@@ -1,0 +1,22 @@
+# Fly.io config for the intake bot.
+# This is a Socket Mode worker: it opens an outbound websocket to Slack and has
+# NO inbound HTTP port, so there is no [http_service] block and no health check.
+#
+# IMPORTANT: run exactly ONE machine. Socket Mode delivers each Slack event to
+# every connected instance, so two machines would reply to every message twice.
+# After deploying, keep it at one with:  fly scale count 1
+
+app = "intake-demo-coyoli"
+primary_region = "iad"
+
+[build]
+
+[env]
+  PYTHONUNBUFFERED = "1"
+  DEFAULT_DESTINATION = "sheet"
+  GOOGLE_WORKSHEET = "Requests"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  cpus = 1
