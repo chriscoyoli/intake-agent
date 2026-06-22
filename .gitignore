@@ -5,3 +5,8 @@ __pycache__/
 *.pyc
 .fly/
 .DS_Store
+
+# Local plaintext source for the passphrase-gated page (do NOT publish)
+index.src.html
+index.plain.html
+_staticout/
