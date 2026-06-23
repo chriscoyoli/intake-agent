@@ -10,3 +10,4 @@ __pycache__/
 index.src.html
 index.plain.html
 _staticout/
+.staticrypt.json
