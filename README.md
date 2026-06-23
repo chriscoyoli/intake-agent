@@ -12,6 +12,7 @@ Companion docs: [`DEMO_SCRIPT.md`](DEMO_SCRIPT.md) (the live walkthrough) and `a
 
 - [The three stages it demonstrates](#the-three-stages-it-demonstrates)
 - [How it works (under the hood)](#how-it-works-under-the-hood)
+- [Customizing for SentiLink](#customizing-for-sentilink)
 - [What it costs to run](#what-it-costs-to-run)
 - [FAQ](#faq)
 - [Why this matters](#why-this-matters)
@@ -78,6 +79,37 @@ Every tool sits behind one tiny interface (`Backend.create` / `Backend.get`). A 
 - `cli.py` - a terminal simulator to rehearse without Slack.
 - `setup_airtable.py` - one-time builder for the Airtable `Requests` table schema.
 - `Dockerfile`, `fly.toml`, `DEPLOY_FLY.md` - always-on Fly.io deployment.
+
+## Customizing for SentiLink
+
+The agent was built to be configured to a company, not rebuilt for it. Almost everything that makes it "SentiLink's" is configuration and a few small adapters on top of the same core. The levers, from fastest to deepest:
+
+1. **Teams and routing map.** The set of teams and where each one's work goes is a one-line config (`INTAKE_ROUTES`). Renaming a team, adding Risk Operations, Data Governance, People, or Finance, and pointing each at its real destination is editing that map. The unique ticket-ID prefixes come from the same place.
+2. **Qualifying questions per request type.** What the agent asks is driven by per-team intake requirements: the fields a request must carry before it is "complete." You define those once per request type, and the agent asks only for what is missing, in plain language, instead of showing a long form.
+3. **Adapters for SentiLink's tools.** Each destination is a small adapter behind one interface (`create` / `get`). The four here (Airtable, Jira, Asana, Sheets) are examples; SentiLink's real stack, whatever ticketing, case-management, CRM, or internal tools you use, plugs in the same way, one adapter per system, with no change to the agent. If a team's work lives in a database or a warehouse, that is just another adapter.
+4. **The intake surface.** Slack is the front door here, but the agent core is surface-agnostic. The same agent can sit behind Microsoft Teams, an email alias, an internal web form, or a portal, whatever employees already use. You choose the door; the brain is the same.
+5. **Routing rules, priority, and escalation.** SentiLink's policies become routing logic: anything touching PII auto-flags compliance, contracts over a threshold route to senior counsel, a blocked employee or a live fraud case is High priority, with SLAs and escalation paths per team. These are rules the router applies, not a rebuild.
+6. **The system of record.** The Google Sheet is a stand-in. Point the unified record at whatever SentiLink trusts, an internal database, a warehouse table, or a governed datastore, and it becomes the single, permissioned source of truth across teams.
+7. **Identity, access, and audit.** Wire in SSO so the requester is known, scope each team's queue so sensitive intake (Legal, People, anything with PII) is permissioned rather than shared, and add immutable audit logging. The unique ticket ID, requester, and timestamp are already the backbone for that.
+8. **Domain knowledge and guardrails.** Feed the agent SentiLink's team directory, request taxonomy, and glossary so it routes accurately, with retrieval over an internal knowledge base if the taxonomy is large. Layer on compliance guardrails: redact or refuse sensitive fields at intake, set data residency, and run the model under a BAA or a private deployment for regulated data.
+
+In practice most of this is configuration plus a handful of adapters, the kind of work measured in days, not a project. A first engagement starts by mapping SentiLink's actual teams, the tools each one uses, and the intake requirements per request type, then encoding those into the routing map, the per-team question sets, and the adapters. The architecture does not change; it gets filled in. Illustratively:
+
+```
+# Routing: SentiLink teams -> their real tools (names illustrative)
+INTAKE_ROUTES=legal=contracts_tool,risk_ops=case_system,data_gov=warehouse,people=hris,it=jira
+
+# Per request type, the fields a complete request must carry (illustrative)
+data_access_request: dataset, purpose, pii_scope, requested_duration
+vendor_review:       counterparty, contract_type, dollar_value, deadline
+fraud_case:          signal, institution, severity
+```
+
+Three SentiLink-flavored examples the same agent would handle:
+
+- **Data-access request to Data Governance.** Captures dataset, purpose, and PII scope; auto-flags compliance; files into the governance queue with an approval gate.
+- **Vendor or contract review to Legal.** Captures counterparty, contract type, value, and deadline; routes high-value or high-risk contracts to senior counsel.
+- **Fraud-operations case to Risk Ops.** Captures the signal, the institution, and severity; assembles a complete case payload and routes it into the analyst queue, with the unified record keeping status visible.
 
 ## What it costs to run
 
