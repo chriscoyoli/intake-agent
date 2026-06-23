@@ -43,6 +43,12 @@ Slack (/problem) -> IntakeAgent -> Router -> the owning team's tool
 
 Every tool sits behind one tiny interface (`Backend.create` / `Backend.get`). A `MirroredBackend` wraps each team's tool so every ticket is also written to the shared Sheet; the `StatusWatcher` keeps the Sheet's status in sync as work moves. Adding a team is one line in the routing map plus one adapter. That is the whole architectural argument: it generalizes to any team with an inbound queue, while the Sheet stays the single source of truth.
 
+### Technical architecture
+
+![Technical architecture and data flow](technical-architecture.png)
+
+The request path (steps 1 to 7) and, in dashed red, the background status loop that runs every 8 seconds.
+
 ### The components
 
 | Layer | What it does | Technology |
@@ -93,17 +99,25 @@ The agent was built to be configured to a company, not rebuilt for it. Almost ev
 7. **Identity, access, and audit.** Wire in SSO so the requester is known, scope each team's queue so sensitive intake (Legal, People, anything with PII) is permissioned rather than shared, and add immutable audit logging. The unique ticket ID, requester, and timestamp are already the backbone for that.
 8. **Domain knowledge and guardrails.** Feed the agent SentiLink's team directory, request taxonomy, and glossary so it routes accurately, with retrieval over an internal knowledge base if the taxonomy is large. Layer on compliance guardrails: redact or refuse sensitive fields at intake, set data residency, and run the model under a BAA or a private deployment for regulated data.
 
-In practice most of this is configuration plus a handful of adapters, the kind of work measured in days, not a project. A first engagement starts by mapping SentiLink's actual teams, the tools each one uses, and the intake requirements per request type, then encoding those into the routing map, the per-team question sets, and the adapters. The architecture does not change; it gets filled in. Illustratively:
+In practice most of this is configuration plus a handful of adapters, the kind of work measured in days, not a project. A first engagement starts by mapping SentiLink's actual teams, the tools each one uses, and the intake requirements per request type, then encoding those into the routing map, the per-team question sets, and the adapters. The architecture does not change; it gets filled in. Two illustrative pieces of that configuration:
 
-```
-# Routing: SentiLink teams -> their real tools (names illustrative)
-INTAKE_ROUTES=legal=contracts_tool,risk_ops=case_system,data_gov=warehouse,people=hris,it=jira
+**Routing map (illustrative)**
 
-# Per request type, the fields a complete request must carry (illustrative)
-data_access_request: dataset, purpose, pii_scope, requested_duration
-vendor_review:       counterparty, contract_type, dollar_value, deadline
-fraud_case:          signal, institution, severity
-```
+| Team | Routes to |
+| --- | --- |
+| Legal | Contracts tool |
+| Risk Operations | Case-management system |
+| Data Governance | Data warehouse |
+| People | HRIS |
+| IT | Jira |
+
+**Intake requirements per request type (illustrative)**
+
+| Request type | Fields a complete request must carry |
+| --- | --- |
+| Data-access request | dataset, purpose, PII scope, requested duration |
+| Vendor / contract review | counterparty, contract type, dollar value, deadline |
+| Fraud case | signal, institution, severity |
 
 Three SentiLink-flavored examples the same agent would handle:
 
